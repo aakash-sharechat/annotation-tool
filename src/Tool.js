@@ -83,7 +83,7 @@ export class Tool extends Component {
         }
         this.audio.pause()
         this.audio.currentTime = 0
-        this.setState({ lyrics: lyrics, currentLine: 0 })
+        this.setState({ lyrics: lyrics, currentLine: 0, completed: false, lineActive: false })
     }
 
     textChange(event) {
@@ -140,16 +140,11 @@ export class Tool extends Component {
             <div>
                 {this.validIndex(this.state.currentLine - 1, true)}
                 {
-                    this.state.lineActive ?
-                        <Button type="dashed" onClick={this.silent} disabled={this.state.lyrics.length === 0}>Silence</Button>
-                        : null
+                    this.state.currentLine < this.state.lyrics.length && this.state.currentLine > 0 &&
+                    <Button type="dashed" onClick={this.silent} disabled={this.state.lyrics.length === 0}>Silence</Button>
                 }
                 {this.validIndex(this.state.currentLine)}
-                {
-                    this.state.lineActive ?
-                        <Button type="dashed" onClick={this.silent} disabled={this.state.lyrics.length === 0}>Silence</Button>
-                        : null
-                }
+                <Button type="dashed" onClick={this.silent} disabled={this.state.lyrics.length === 0}>Silence</Button>
                 {this.validIndex(this.state.currentLine + 1, true)}
             </div>
         )
@@ -157,7 +152,6 @@ export class Tool extends Component {
 
     render() {
         const faded = { color: "rgba(0, 0, 0, 0.5)" }
-        let line = "Please enter lyrics to continue", start = 0, end = 0
         if (this.state.currentLine < this.state.lyrics.length) {
             line = this.state.lyrics[this.state.currentLine].line
             start = this.state.lyrics[this.state.currentLine].startTime
