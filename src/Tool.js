@@ -1,11 +1,9 @@
 import 'antd/dist/antd.css'
 // import './Tool.css'
 import React, { Component } from 'react'
-import { Typography, Card, Slider, InputNumber, Row, Col, Input, Button, Icon } from 'antd'
-import { CSVLink } from "react-csv"
+import { Popconfirm, Typography, Card, Slider, InputNumber, Row, Col, Input, Button, Icon } from 'antd'
 
 const { Title } = Typography;
-const { TextArea } = Input;
 const faded = { color: "rgba(0, 0, 0, 0.5)" }
 
 export class Tool extends Component {
@@ -13,31 +11,26 @@ export class Tool extends Component {
         super(props)
 
         this.state = {
-            source: "http://streaming.tdiradio.com:8000/house.mp3",
+            source: props.source,
+            lyrics: props.lyrics,
+            wordLevel: props.wordLevel,
             duration: 0,
             rate: 1,
             currentLine: 0,
-            lyrics: [],
             songName: "",
             lineActive: false,
             completed: false,
         }
 
+        this.makeSRT = this.makeSRT.bind(this)
+        this.downloadSRT = this.downloadSRT.bind(this)
         this.mark = this.mark.bind(this)
         this.prev = this.prev.bind(this)
         this.validIndex = this.validIndex.bind(this)
         this.annotateElement = this.annotateElement.bind(this)
         this.reset = this.reset.bind(this)
         this.silent = this.silent.bind(this)
-        this.onChange = this.onChange.bind(this)
-        this.textChange = this.textChange.bind(this)
         this.changeRate = this.changeRate.bind(this)
-    }
-
-    onChange(event) {
-        const file = event.target.files[0]
-        const link = URL.createObjectURL(file)
-        this.setState({ source: link, songName: file.name })
     }
 
     mark() {
@@ -51,7 +44,7 @@ export class Tool extends Component {
         let lyrics = this.state.lyrics
         if (this.state.lineActive && this.state.currentLine > 0) {
             lyrics[this.state.currentLine - 1].endTime = Math.max(lyrics[this.state.currentLine - 1].startTime, time - 1)
-            completed = this.state.currentLine == this.state.lyrics.length
+            completed = this.state.currentLine === this.state.lyrics.length
         }
         if (this.state.currentLine < this.state.lyrics.length) {
             lyrics[this.state.currentLine].startTime = time
@@ -70,9 +63,9 @@ export class Tool extends Component {
         let lyrics = this.state.lyrics
         if (this.state.lineActive && this.state.currentLine > 0) {
             lyrics[this.state.currentLine - 1].endTime = Math.max(lyrics[this.state.currentLine - 1].startTime, time)
-            completed = this.state.currentLine == this.state.lyrics.length
+            completed = this.state.currentLine === this.state.lyrics.length
         }
-        this.setState({ lyrics: lyrics, lineActive: false, completed: completed })
+        this.setState({ lyrics: lyrics, completed: completed, lineActive: false })
     }
 
     reset() {
@@ -86,16 +79,39 @@ export class Tool extends Component {
         this.setState({ lyrics: lyrics, currentLine: 0, completed: false, lineActive: false })
     }
 
-    textChange(event) {
-        const text = event.target.value
-        const lines = text.split('\n')
-        const lyrics = lines.map(line => ({ line: line, startTime: 0, endTime: 0 }))
-        this.setState({ lyrics: lyrics })
-    }
-
     changeRate(rate) {
         this.setState({ rate: rate })
         this.audio.playbackRate = rate
+    }
+
+    formatTime(milli) {
+        const minutes = Math.floor(milli / (60 * 1000))
+        milli -= minutes * (60 * 1000)
+        const seconds = Math.floor(milli / 1000)
+        milli -= seconds * 1000
+
+        return `00:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')},${String(milli).padStart(3, '0')}`
+    }
+
+    makeSRT() {
+        let srtString = ''
+        for (let i = 0; i < this.state.lyrics.length; i++) {
+            srtString += `${i + 1}\n`
+            srtString += `${this.formatTime(this.state.lyrics[i].startTime)}-->`
+            srtString += `${this.formatTime(this.state.lyrics[i].endTime)}\n`
+            srtString += this.state.lyrics[i].line + '\n\n'
+        }
+        return srtString
+    }
+
+    downloadSRT() {
+        const srtString = this.makeSRT()
+        const file = new Blob([srtString])
+        const element = document.createElement("a");
+        element.href = URL.createObjectURL(file);
+        document.body.appendChild(element); // Required for this to work in FireFox
+        element.download = `${this.state.songName}.srt`
+        element.click();
     }
 
     prev() {
@@ -113,7 +129,7 @@ export class Tool extends Component {
     }
 
     validIndex(ind) {
-        const fadeText = ind != this.state.currentLine
+        const fadeText = ind !== this.state.currentLine
         let valid = this.state.lyrics.length > 0
         valid &= ind >= 0
         valid &= ind < this.state.lyrics.length
@@ -131,7 +147,7 @@ export class Tool extends Component {
     }
 
     annotateElement() {
-        if (this.state.lyrics.length == 0) {
+        if (this.state.lyrics.length === 0) {
             return <Title>Please add lyrics</Title>
         }
         if (this.state.completed)
@@ -153,14 +169,6 @@ export class Tool extends Component {
     render() {
         return (
             <div>
-                <Card title="Input" style={{ width: "80%", margin: "2em auto" }} hide={true}>
-                    <center>
-                        <div>
-                            <TextArea onChange={this.textChange} placeholder="Enter Lyrics" autoSize />
-                        </div>
-                        <input type='file' name='file' onChange={this.onChange} />
-                    </center>
-                </Card>
                 <Card title="Audio" style={{ width: "80%", margin: "2em auto" }}>
                     <center >
                         <audio ref={(a) => this.audio = a} src={this.state.source} style={{ width: "80%", margin: 'auto' }} controls>
@@ -204,7 +212,12 @@ export class Tool extends Component {
 
                     <center>
                         <Button style={{ margin: "1em" }} type="primary" onClick={this.mark} disabled={this.state.lyrics.length === 0}>Mark</Button>
-                        <Button style={{ margin: "1em" }} type="danger" onClick={this.reset} disabled={this.state.lyrics.length === 0}>Reset</Button>
+                        <Popconfirm
+                            placement="bottom"
+                            title="Are you sure you want to reset? You will lose all annotation"
+                            onConfirm={this.reset} okText="Yes" cancelText="No">
+                            <Button style={{ margin: "1em" }} type="danger" disabled={this.state.lyrics.length === 0}>Reset</Button>
+                        </Popconfirm>
                         <Button
                             style={{ margin: "1em" }}
                             type="primary"
@@ -220,14 +233,9 @@ export class Tool extends Component {
                 </Card>
 
                 <center style={{ margin_top: 30 }}>
-                    <CSVLink
-                        data={this.state.lyrics}
-                        filename={`${this.state.songName}.csv`}
-                        style={{ color: "white", margin: 'auto' }}>
-                        <Button type="primary" shape="round" icon="download" size="large" >
-                            Save File
+                    <Button type="primary" shape="round" icon="download" size="large" onClick={this.downloadSRT} >
+                        Save File
                         </Button>
-                    </CSVLink>
                 </center>
             </div >
         );

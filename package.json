@@ -10,6 +10,7 @@
     "react": "^16.12.0",
     "react-csv": "^1.1.2",
     "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.1"
   },
   "scripts": {
@@ -38,5 +39,6 @@
   "proxy": "http://localhost:3000",
   "devDependencies": {
     "gh-pages": "^2.2.0"
-  }
+  },
+  "homepage": "http://spellstaker.github.io/annotation-tool"
 }
