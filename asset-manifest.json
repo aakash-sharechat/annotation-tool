@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/annotation-tool/static/css/main.d1b05096.chunk.css",
+    "main.js": "/annotation-tool/static/js/main.7aa912bb.chunk.js",
+    "main.js.map": "/annotation-tool/static/js/main.7aa912bb.chunk.js.map",
+    "runtime-main.js": "/annotation-tool/static/js/runtime-main.a796bf50.js",
+    "runtime-main.js.map": "/annotation-tool/static/js/runtime-main.a796bf50.js.map",
+    "static/css/2.1e105a3b.chunk.css": "/annotation-tool/static/css/2.1e105a3b.chunk.css",
+    "static/js/2.2c2696b7.chunk.js": "/annotation-tool/static/js/2.2c2696b7.chunk.js",
+    "static/js/2.2c2696b7.chunk.js.map": "/annotation-tool/static/js/2.2c2696b7.chunk.js.map",
+    "index.html": "/annotation-tool/index.html",
+    "precache-manifest.e347a555643b06eb50b724b0d41d8e2c.js": "/annotation-tool/precache-manifest.e347a555643b06eb50b724b0d41d8e2c.js",
+    "service-worker.js": "/annotation-tool/service-worker.js",
+    "static/css/2.1e105a3b.chunk.css.map": "/annotation-tool/static/css/2.1e105a3b.chunk.css.map",
+    "static/css/main.d1b05096.chunk.css.map": "/annotation-tool/static/css/main.d1b05096.chunk.css.map",
+    "static/js/2.2c2696b7.chunk.js.LICENSE.txt": "/annotation-tool/static/js/2.2c2696b7.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a796bf50.js",
+    "static/css/2.1e105a3b.chunk.css",
+    "static/js/2.2c2696b7.chunk.js",
+    "static/css/main.d1b05096.chunk.css",
+    "static/js/main.7aa912bb.chunk.js"
+  ]
+}
