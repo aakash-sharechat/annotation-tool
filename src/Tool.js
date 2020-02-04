@@ -151,13 +151,6 @@ export class Tool extends Component {
     }
 
     render() {
-        const faded = { color: "rgba(0, 0, 0, 0.5)" }
-        if (this.state.currentLine < this.state.lyrics.length) {
-            line = this.state.lyrics[this.state.currentLine].line
-            start = this.state.lyrics[this.state.currentLine].startTime
-            end = this.state.lyrics[this.state.currentLine].endTime
-        }
-
         return (
             <div>
                 <Card title="Input" style={{ width: "80%", margin: "2em auto" }} hide={true}>
