@@ -12,7 +12,7 @@ export class Tool extends Component {
 
         this.state = {
             source: props.source,
-            lyrics: props.lyrics,
+            lyrics: ,
             wordLevel: props.wordLevel,
             duration: 0,
             rate: 1,

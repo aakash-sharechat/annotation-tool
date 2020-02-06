@@ -52,7 +52,6 @@ export class input extends Component {
                         <input type='file' name='file' onChange={this.onChange} />
                         <div>
                             Word Level <Switch />
-
                         </div>
                         <Button type="primary" href="/annotate">Proceed <Icon type="right" /></Button>
                     </center>

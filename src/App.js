@@ -28,9 +28,7 @@ export class App extends Component {
     render() {
         return (
             <Switch>
-                <Route path='/' exact>
-                    <input />
-                </Route>
+                <Route path='/' exact component={input} />
                 <Route path='/annotate' component={Tool} />
             </Switch>
         );
